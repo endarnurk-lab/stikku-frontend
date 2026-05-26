@@ -47,19 +47,16 @@ export default function Home() {
     <main className="min-h-screen p-4 md:p-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white pb-20">
       
       {/* HEADER NAVIGASI */}
-      <header className="mb-6 flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-black text-blue-600 dark:text-blue-400 tracking-tighter">Stikku.</h1>
-        </div>
-        <div className="flex gap-4">
-          <Link href="/admin" className="bg-gray-100 text-gray-800 px-4 py-2 rounded-xl font-bold hover:bg-gray-200 transition text-sm flex items-center">
-            Dashboard Admin 🛠️
-          </Link>
-          <Link href="/custom" className="bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-4 py-2 rounded-xl font-bold hover:opacity-80 transition text-sm flex items-center">
-            + Stiker Custom
-          </Link>
-        </div>
-      </header>
+<header className="mb-6 flex justify-between items-center">
+  <div>
+    <h1 className="text-3xl md:text-4xl font-black text-blue-600 dark:text-blue-400 tracking-tighter">Stikku.</h1>
+  </div>
+  <div className="flex gap-4">
+    <Link href="/custom" className="bg-gray-900 text-white dark:bg-white dark:text-gray-900 px-4 py-2 rounded-xl font-bold hover:opacity-80 transition text-sm flex items-center">
+      + Stiker Custom
+    </Link>
+  </div>
+</header>
 
       {/* HERO BANNER */}
       <section className="w-full bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-8 md:p-12 mb-10 text-white shadow-xl flex flex-col md:flex-row items-center justify-between">
