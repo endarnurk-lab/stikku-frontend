@@ -1,104 +1,75 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase'; // Pastikan path import supabase Anda benar
+import { useState } from 'react';
+// Pastikan folder lib ada di folder src, sehingga alamatnya adalah ../../lib/supabase
+import { supabase } from './../lib/supabase'; 
+
+type ProductType = {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  price: number;
+  image_url?: string;
+};
 
 export default function AdminDashboard() {
-  const [pin, setPin] = useState('');
-  const [isUnlocked, setIsUnlocked] = useState(false);
+  const [isLocked, setIsLocked] = useState(true);
+  const [pinInput, setPinInput] = useState('');
+  const [products, setProducts] = useState<ProductType[]>([]);
   
-  // State untuk form input
-  const [name, setName] = useState('');
-  const [price, setPrice] = useState('');
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  // Fungsi Login
+  // Fungsi untuk buka gembok
   const handleLogin = () => {
-    if (pin === '123456') { // Ganti PIN Anda di sini
-      setIsUnlocked(true);
+    if (pinInput === '123456') { // Ganti PIN Anda di sini
+      setIsLocked(false);
+      fetchProducts();
     } else {
       alert('PIN Salah!');
     }
   };
 
-  // Fungsi Tambah Produk
-  const handleAddProduct = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  // Ambil data produk
+  async function fetchProducts() {
+    const { data } = await supabase.from('products').select('*');
+    if (data) setProducts(data as ProductType[]);
+  }
 
-    if (!imageFile) {
-        alert("Pilih gambar dulu!");
-        setLoading(false);
-        return;
-    }
-
-    // 1. Upload Gambar ke Storage
-    const fileName = `${Date.now()}_${imageFile.name}`;
-    const { error: uploadError } = await supabase.storage.from('products').upload(fileName, imageFile);
-
-    if (uploadError) {
-        alert("Gagal upload gambar: " + uploadError.message);
-        setLoading(false);
-        return;
-    }
-
-    // 2. Ambil URL Gambar
-    const { data: publicUrlData } = supabase.storage.from('products').getPublicUrl(fileName);
-    
-    // 3. Simpan ke database
-    const { error } = await supabase.from('products').insert([
-        { name, price: Number(price), image_url: publicUrlData.publicUrl }
-    ]);
-
-    if (error) {
-        alert("Gagal simpan data: " + error.message);
-    } else {
-        alert("Produk berhasil ditambahkan!");
-        setName('');
-        setPrice('');
-        setImageFile(null);
-    }
-    setLoading(false);
-  };
-
-  // Tampilan Gembok (PIN)
-  if (!isUnlocked) {
+  // Tampilan layar kunci
+  if (isLocked) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
         <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-sm text-center">
-          <h1 className="text-2xl font-bold mb-4">🔐 Area Admin</h1>
+          <h1 className="text-2xl font-bold mb-4">🔒 Area Admin</h1>
           <input 
             type="password" 
-            className="w-full p-3 border rounded-xl mb-4 text-center text-xl" 
-            value={pin} 
-            onChange={(e) => setPin(e.target.value)} 
+            className="w-full p-3 border rounded-lg mb-4 text-center text-xl tracking-widest" 
+            value={pinInput} 
+            onChange={(e) => setPinInput(e.target.value)} 
             placeholder="Masukkan PIN"
           />
-          <button onClick={handleLogin} className="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">Masuk</button>
+          <button onClick={handleLogin} className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold">
+            Buka Gembok
+          </button>
         </div>
       </div>
     );
   }
 
-  // Tampilan Dashboard (Setelah Login)
+  // Tampilan Dashboard asli
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Dashboard Admin</h1>
-        <button onClick={() => setIsUnlocked(false)} className="text-red-500 font-bold">Keluar 🔒</button>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-6">Selamat Datang, Admin</h1>
+      <button onClick={() => setIsLocked(true)} className="mb-4 bg-red-500 text-white px-4 py-2 rounded">
+        Keluar (Kunci)
+      </button>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {products.map((p) => (
+          <div key={p.id} className="border p-4 rounded-lg">
+            <h2 className="font-bold">{p.name}</h2>
+            <p>Rp {p.price.toLocaleString('id-ID')}</p>
+          </div>
+        ))}
       </div>
-
-      {/* FORM INPUT PRODUK */}
-      <form onSubmit={handleAddProduct} className="bg-white p-6 rounded-2xl shadow border space-y-4">
-        <h2 className="text-xl font-bold">Tambah Produk Baru</h2>
-        <input required type="text" placeholder="Nama Stiker" value={name} onChange={(e) => setName(e.target.value)} className="w-full p-2 border rounded" />
-        <input required type="number" placeholder="Harga" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full p-2 border rounded" />
-        <input required type="file" onChange={(e) => setImageFile(e.target.files?.[0] || null)} className="w-full p-2 border rounded" />
-        <button disabled={loading} type="submit" className="w-full bg-blue-600 text-white py-2 rounded font-bold">
-            {loading ? "Mengunggah..." : "Tambah Produk"}
-        </button>
-      </form>
     </div>
   );
 }
