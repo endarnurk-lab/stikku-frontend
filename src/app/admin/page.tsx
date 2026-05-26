@@ -6,7 +6,7 @@ export default function AdminLock() {
   const [isUnlocked, setIsUnlocked] = useState(false);
 
   const handleLogin = () => {
-    if (pin === '123456') { // PIN ANDA
+    if (pin === '250106') { // PIN ANDA
       setIsUnlocked(true);
     } else {
       alert('PIN Salah!');
