@@ -16,7 +16,7 @@ export default function AdminDashboard() {
   // === SISTEM KEAMANAN PIN ===
   const [isLocked, setIsLocked] = useState(true);
   const [pinInput, setPinInput] = useState('');
-  const PIN_RAHASIA = '123456'; // SILAKAN GANTI PIN ANDA DI SINI
+  const PIN_RAHASIA = '250106'; // SILAKAN GANTI PIN ANDA DI SINI
 
   // === STATE DATA PRODUK ===
   const [products, setProducts] = useState<ProductType[]>([]);
