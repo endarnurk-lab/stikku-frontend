@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { supabase } from './../lib/supabase'; // JIKA MERAH, ubah menjadi: import { supabase } from '../lib/supabase'; atau '@/lib/supabase';
+import { supabase } from '../../lib/supabase'; // JIKA MERAH, ubah menjadi: import { supabase } from '../lib/supabase'; atau '@/lib/supabase';
 
 type ProductType = {
   id: string;
