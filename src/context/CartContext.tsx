@@ -1,25 +1,38 @@
 "use client";
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState } from 'react';
 
-type CartItem = { id: string; name: string; price: number; qty: number; };
-type CartContextType = { 
-  cart: CartItem[]; 
-  addToCart: (item: CartItem) => void; 
-  totalItems: number; 
+// Tipe data untuk produk di keranjang
+type Product = { id: string; name: string; price: number; image_url: string };
+type CartItem = Product & { quantity: number };
+
+type CartContextType = {
+  cart: CartItem[];
+  addToCart: (product: Product) => void;
+  totalItems: number;
 };
 
+// Membuat wadah penyimpanan
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export function CartProvider({ children }: { children: ReactNode }) {
+// Wadah Utama yang akan membungkus aplikasi
+export function CartProvider({ children }: { children: React.ReactNode }) {
   const [cart, setCart] = useState<CartItem[]>([]);
-  const addToCart = (product: CartItem) => {
+
+  // Fungsi menambah barang
+  const addToCart = (product: Product) => {
     setCart((prev) => {
       const existing = prev.find((item) => item.id === product.id);
-      if (existing) return prev.map((item) => item.id === product.id ? { ...item, qty: item.qty + 1 } : item);
-      return [...prev, { ...product, qty: 1 }];
+      if (existing) {
+        return prev.map((item) => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
+      }
+      return [...prev, { ...product, quantity: 1 }];
     });
+    alert(`🛒 Berhasil menambahkan ${product.name} ke keranjang!`);
   };
-  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+
+  // Menghitung total barang di ikon keranjang
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
     <CartContext.Provider value={{ cart, addToCart, totalItems }}>
       {children}
@@ -27,8 +40,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useCart() {
+// Alat bantu untuk memanggil keranjang
+export const useCart = () => {
   const context = useContext(CartContext);
-  if (!context) throw new Error('CartProvider belum membungkus aplikasi!');
+  if (!context) throw new Error("Gunakan useCart di dalam CartProvider");
   return context;
-}
+};

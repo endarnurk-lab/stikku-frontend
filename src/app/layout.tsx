@@ -1,11 +1,24 @@
-import { CartProvider } from "../context/CartContext";
-import "./globals.css"; // INI WAJIB ADA agar desainnya muncul!
+import type { Metadata } from 'next';
+import './globals.css';
+import { CartProvider } from '../context/CartContext';
+import Navbar from '../components/Navbar';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export const metadata: Metadata = {
+  title: 'Stikku - Toko Stiker Premium',
+  description: 'Temukan stiker keren untuk melengkapi gayamu.',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="id">
-      <body>
+      <body className="bg-slate-50 text-slate-900">
+        {/* Membungkus seluruh web dengan "Memori Keranjang" */}
         <CartProvider>
+          <Navbar />
           {children}
         </CartProvider>
       </body>
