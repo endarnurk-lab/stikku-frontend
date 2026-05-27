@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase'; 
-import { useCart } from '../context/CartContext'; // IMPORT KERANJANG
+import { useCart } from '../context/CartContext';
 
 type ProductType = {
   id: string;
@@ -17,7 +17,6 @@ export default function Home() {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // PANGGIL FUNGSI TAMBAH KE KERANJANG
   const { addToCart } = useCart(); 
 
   useEffect(() => {
@@ -67,7 +66,6 @@ export default function Home() {
                   <div className="flex items-center justify-between mt-auto">
                     <span className="text-lg font-black text-blue-600">Rp {product.price.toLocaleString('id-ID')}</span>
                     
-                    {/* TOMBOL BELI AKTIF */}
                     <button 
                       onClick={() => addToCart(product)}
                       className="bg-slate-900 hover:bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-md"

@@ -16,7 +16,6 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className="bg-slate-50 text-slate-900">
-        {/* Membungkus seluruh web dengan "Memori Keranjang" */}
         <CartProvider>
           <Navbar />
           {children}
