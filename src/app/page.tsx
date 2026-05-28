@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase'; 
 import { useCart } from '../context/CartContext';
+import Link from 'next/link';
 
 type ProductType = {
   id: string;
@@ -16,11 +17,8 @@ type ProductType = {
 export default function Home() {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  // STATE BARU: Untuk menyimpan teks pencarian & kategori terpilih
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Semua');
-
   const { addToCart } = useCart(); 
 
   useEffect(() => {
@@ -32,10 +30,8 @@ export default function Home() {
     fetchProducts();
   }, []);
 
-  // FITUR: Mengambil daftar kategori unik secara otomatis dari produk yang ada
   const categories = ['Semua', ...Array.from(new Set(products.map(p => p.category)))];
 
-  // FITUR: Menyaring produk berdasarkan kolom pencarian DAN tombol kategori
   const filteredProducts = products.filter(product => {
     const matchCategory = selectedCategory === 'Semua' || product.category === selectedCategory;
     const matchSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -44,14 +40,12 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-slate-50">
-      {/* HERO SECTION & KOTAK PENCARIAN */}
       <div className="bg-blue-600 text-white py-16 px-4 text-center">
         <h1 className="text-4xl md:text-5xl font-black mb-4">Selamat Datang di Stikku! ✨</h1>
         <p className="text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-8">
           Temukan koleksi stiker premium untuk laptop, buku, dan gadget kesayanganmu.
         </p>
         
-        {/* Kolom Pencarian */}
         <div className="max-w-xl mx-auto relative">
           <input 
             type="text" 
@@ -65,8 +59,6 @@ export default function Home() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        
-        {/* TOMBOL KATEGORI HORIZONTAL */}
         {!loading && products.length > 0 && (
           <div className="flex gap-3 overflow-x-auto pb-4 mb-8 scrollbar-hide">
             {categories.map((cat, index) => (
@@ -85,7 +77,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* TAMPILAN PRODUK */}
         {loading ? (
           <div className="flex justify-center h-40"><p className="text-slate-500 font-medium animate-pulse">Memuat stiker keren...</p></div>
         ) : products.length === 0 ? (
@@ -93,7 +84,6 @@ export default function Home() {
             <h3 className="text-xl font-bold text-slate-700">Belum ada stiker</h3>
           </div>
         ) : filteredProducts.length === 0 ? (
-          /* JIKA PENCARIAN TIDAK DITEMUKAN */
           <div className="text-center bg-white p-12 rounded-2xl border border-slate-200">
             <div className="text-4xl mb-4">🕵️‍♂️</div>
             <h3 className="text-xl font-bold text-slate-700">Stiker tidak ditemukan</h3>
@@ -103,21 +93,25 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
               <div key={product.id} className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl transition-all group flex flex-col">
-                <div className="aspect-square bg-slate-100 overflow-hidden relative">
+                
+                {/* INI PERUBAHANNYA: Gambar dibungkus dengan Link agar bisa diklik */}
+                <Link href={`/product/${product.id}`} className="aspect-square bg-slate-100 overflow-hidden relative block cursor-pointer">
                   {product.image_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-slate-400">No Image</div>
                   )}
-                  {/* Badge Kategori di Pojok Gambar */}
                   <span className="absolute top-3 right-3 bg-white/90 backdrop-blur text-blue-700 text-xs font-bold px-3 py-1 rounded-full shadow-sm">
                     {product.category}
                   </span>
-                </div>
+                </Link>
 
                 <div className="p-5 flex flex-col flex-grow">
-                  <h3 className="font-bold text-lg text-slate-800 mb-1 line-clamp-1">{product.name}</h3>
+                  {/* Judul juga bisa diklik */}
+                  <Link href={`/product/${product.id}`}>
+                    <h3 className="font-bold text-lg text-slate-800 mb-1 line-clamp-1 hover:text-blue-600 transition-colors cursor-pointer">{product.name}</h3>
+                  </Link>
                   <p className="text-sm text-slate-500 mb-4 line-clamp-2 flex-grow">{product.description || "Stiker premium berkualitas tinggi."}</p>
                   
                   <div className="flex items-center justify-between mt-auto">
@@ -125,7 +119,7 @@ export default function Home() {
                     
                     <button 
                       onClick={() => addToCart(product)}
-                      className="bg-slate-900 hover:bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-md"
+                      className="bg-slate-900 hover:bg-blue-600 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors shadow-md z-10 relative"
                       title="Tambah ke Keranjang"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
