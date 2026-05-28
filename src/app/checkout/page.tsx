@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '../../context/CartContext';
 import Link from 'next/link';
 
@@ -12,6 +12,7 @@ declare global {
     };
   }
 }
+
 export default function CheckoutPage() {
   const { cart, decreaseQuantity, addToCart, removeFromCart } = useCart();
   const [nama, setNama] = useState('');
@@ -19,6 +20,23 @@ export default function CheckoutPage() {
   const [isSuccess, setIsSuccess] = useState(false);
 
   const subTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
+  // EFEK SAMPING: Memuat script Midtrans secara aman tanpa error JSX Next.js
+  useEffect(() => {
+    const snapScript = "https://app.sandbox.midtrans.com/snap/snap.js";
+    const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "";
+    
+    const script = document.createElement('script');
+    script.src = snapScript;
+    script.setAttribute('data-client-key', clientKey);
+    script.async = true;
+    
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script); // Bersihkan saat pindah halaman
+    }
+  }, []);
 
   const handlePayment = async () => {
     if (!nama) {
@@ -59,8 +77,7 @@ export default function CheckoutPage() {
         alert("Gagal terhubung ke sistem pembayaran.");
         setLoadingPay(false);
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       alert("Terjadi kesalahan sistem.");
       setLoadingPay(false);
     }

@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 
     // CATATAN: Ini adalah Server Key Sandbox (Uji Coba) DUMMY. 
     // Nanti kita akan ganti dengan kunci rahasia dari akun Midtrans Anda.
-    const serverKey = "SB-Mid-server-DUMMY"; 
+    const serverKey = process.env.MIDTRANS_SERVER_KEY || "";
     const authString = Buffer.from(serverKey + ':').toString('base64');
 
     // Data yang dikirim ke Midtrans
