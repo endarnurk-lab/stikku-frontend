@@ -22,8 +22,10 @@ export default function CheckoutPage() {
   const subTotal = cart.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
   // EFEK SAMPING: Memuat script Midtrans secara aman tanpa error JSX Next.js
+  // EFEK SAMPING: Memuat script Midtrans secara aman tanpa error JSX Next.js
   useEffect(() => {
-    const snapScript = "https://app.sandbox.midtrans.com/snap/snap.js";
+    // SAYA MENGHAPUS KATA 'sandbox.' DI BAWAH INI
+    const snapScript = "https://app.midtrans.com/snap/snap.js";
     const clientKey = process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY || "";
     
     const script = document.createElement('script');

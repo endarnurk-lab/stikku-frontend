@@ -23,7 +23,8 @@ export async function POST(request: Request) {
       }
     };
 
-    const response = await fetch('https://app.sandbox.midtrans.com/snap/v1/transactions', {
+    // SAYA MENGHAPUS KATA 'sandbox.' DI SINI
+    const response = await fetch('https://app.midtrans.com/snap/v1/transactions', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
