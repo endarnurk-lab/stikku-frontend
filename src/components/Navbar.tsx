@@ -1,4 +1,5 @@
 "use client";
+
 import Link from 'next/link';
 import { useCart } from '../context/CartContext';
 
@@ -18,15 +19,15 @@ export default function Navbar() {
             Area Admin
           </Link>
           
-          {/* Ikon Keranjang */}
-          <button className="relative bg-slate-100 p-3 rounded-full hover:bg-slate-200 transition-all cursor-pointer">
+          {/* Ikon Keranjang - SEKARANG BISA DIKLIK! */}
+          <Link href="/checkout" className="relative bg-slate-100 p-3 rounded-full hover:bg-slate-200 transition-all cursor-pointer inline-block">
             <span className="text-xl">🛒</span>
             {totalItems > 0 && (
               <span className="absolute -top-1 -right-1 bg-rose-500 text-white text-[11px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-white animate-bounce">
                 {totalItems}
               </span>
             )}
-          </button>
+          </Link>
         </div>
       </div>
     </nav>
